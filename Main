@@ -1,0 +1,7 @@
+echo "# Fabric_EngineeringProject" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/MikheilGubelidze/Fabric_EngineeringProject.git
+git push -u origin main
