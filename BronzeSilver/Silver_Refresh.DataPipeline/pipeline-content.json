@@ -79,7 +79,10 @@
         "type": "SetVariable",
         "typeProperties": {
           "variableName": "Var_RunID",
-          "value": "@guid()"
+          "value": {
+            "value": "@guid()",
+            "type": "Expression"
+          }
         },
         "policy": {
           "secureInput": false,
@@ -111,7 +114,10 @@
               "type": "String"
             },
             "RunID": {
-              "value": "@variables('Var_RunID')",
+              "value": {
+                "value": "@variables('Var_RunID')",
+                "type": "Expression"
+              },
               "type": "Guid"
             },
             "TableName": {
@@ -164,7 +170,10 @@
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
                 "parameters": {
                   "run_id": {
-                    "value": "@variables('Var_RunID')",
+                    "value": {
+                      "value": "@variables('Var_RunID')",
+                      "type": "Expression"
+                    },
                     "type": "string"
                   },
                   "wm_from": {
@@ -200,14 +209,14 @@
                 "storedProcedureParameters": {
                   "TableName": {
                     "value": {
-                      "value": "@activity('Lookup_New_WM').output.firstRow.NewWatermarkValue\n\n",
+                      "value": "@activity('Lookup_Old_WM').output.firstRow.TableName\n\n\n",
                       "type": "Expression"
                     },
                     "type": "String"
                   },
                   "WatermarkValue": {
                     "value": {
-                      "value": "@activity('Lookup_Old_WM').output.firstRow.TableName\n",
+                      "value": "@activity('Lookup_New_WM').output.firstRow.NewWatermarkValue\n\n",
                       "type": "Expression"
                     },
                     "type": "String"
@@ -277,7 +286,10 @@
                     "type": "Int32"
                   },
                   "RunID": {
-                    "value": "@variables('Var_RunID')",
+                    "value": {
+                      "value": "@variables('Var_RunID')",
+                      "type": "Expression"
+                    },
                     "type": "Guid"
                   },
                   "Status": {
@@ -331,7 +343,10 @@
                     "type": "String"
                   },
                   "RunID": {
-                    "value": "@variables('Var_RunID')",
+                    "value": {
+                      "value": "@variables('Var_RunID')",
+                      "type": "Expression"
+                    },
                     "type": "Guid"
                   }
                 }
@@ -370,7 +385,10 @@
               "typeProperties": {
                 "body": "<p><b>Log RunID:</b> @{variables('Var_RunID')}</p>\n<p><b>დრო (UTC):</b> @{utcNow()}</p>\n<p><b>შეცდომა:</b> @{activity('NB_Bronze_To_Silver').error.message}</p>\n",
                 "to": "gubelidze@live.com",
-                "subject": "@{pipeline().Pipeline}  FAILED – NB_Bronze_To_Silver"
+                "subject": {
+                  "value": "@{pipeline().Pipeline}  FAILED – NB_Bronze_To_Silver",
+                  "type": "Expression"
+                }
               },
               "externalReferences": {
                 "connection": "a6557eb1-94bc-4b43-9995-f6a6281f6fe7"
@@ -427,7 +445,10 @@
                     "type": "String"
                   },
                   "RunID": {
-                    "value": "@variables('Var_RunID')",
+                    "value": {
+                      "value": "@variables('Var_RunID')",
+                      "type": "Expression"
+                    },
                     "type": "Guid"
                   }
                 }
@@ -493,7 +514,10 @@
                     "type": "String"
                   },
                   "RunID": {
-                    "value": "@variables\n('Var_RunID')\n",
+                    "value": {
+                      "value": "@variables('Var_RunID')\n",
+                      "type": "Expression"
+                    },
                     "type": "Guid"
                   }
                 }
@@ -522,7 +546,7 @@
                 {
                   "activity": "Log_Success",
                   "dependencyConditions": [
-                    "Succeeded"
+                    "Failed"
                   ]
                 }
               ]
@@ -551,7 +575,10 @@
                     "type": "Int32"
                   },
                   "RunID": {
-                    "value": "@variables('Var_RunID')",
+                    "value": {
+                      "value": "@variables('Var_RunID')",
+                      "type": "Expression"
+                    },
                     "type": "Guid"
                   },
                   "Status": {
