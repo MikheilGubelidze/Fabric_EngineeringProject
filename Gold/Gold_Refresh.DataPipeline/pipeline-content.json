@@ -1,0 +1,480 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "sqlReaderQuery": "SELECT CAST(CustomerID AS VARCHAR(50))        AS CustomerID,\n       CAST(CustomerName AS VARCHAR(200))     AS CustomerName,\n       CAST(Segment AS VARCHAR(100))          AS Segment,\n       CAST(City AS VARCHAR(100))             AS City,\n       CAST(LastModifiedTime AS DATETIME2(6)) AS LastModifiedTime,\n       CAST(SYSUTCDATETIME() AS DATETIME2(6)) AS LoadedAt\nFROM [UGTBI].[dbo].[MG_Customer]",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "database": "UGTBI"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "04d3fdb0-b8b1-43cb-9357-f40bdb02cb24"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "writeBehavior": "Insert",
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "Src_Customer"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "DWH_Gold_MG",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "9e943b80-8178-8376-4bb3-a70ff481f648",
+                    "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-m3wys2yusgte7maqwtwyt2nzjq.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "CustomerID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "CustomerID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "CustomerName",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "200"
+                },
+                "sink": {
+                  "name": "CustomerName",
+                  "physicalType": "varchar",
+                  "length": "200"
+                }
+              },
+              {
+                "source": {
+                  "name": "Segment",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "100"
+                },
+                "sink": {
+                  "name": "Segment",
+                  "physicalType": "varchar",
+                  "length": "100"
+                }
+              },
+              {
+                "source": {
+                  "name": "City",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "100"
+                },
+                "sink": {
+                  "name": "City",
+                  "physicalType": "varchar",
+                  "length": "100"
+                }
+              },
+              {
+                "source": {
+                  "name": "LastModifiedTime",
+                  "type": "DateTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                },
+                "sink": {
+                  "name": "LastModifiedTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "LoadedAt",
+                  "type": "DateTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                },
+                "sink": {
+                  "name": "LoadedAt",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy_Customer",
+        "dependsOn": [
+          {
+            "activity": "Log_Start",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "sqlReaderQuery": "SELECT CAST(ProductID AS VARCHAR(20))         AS ProductID,\n       CAST(ProductName AS VARCHAR(200))      AS ProductName,\n       CAST(Category AS VARCHAR(100))         AS Category,\n       CAST(SubCategory AS VARCHAR(100))      AS SubCategory,\n       CAST(Brand AS VARCHAR(100))            AS Brand,\n       CAST(LastModifiedTime AS DATETIME2(6)) AS LastModifiedTime,\n       CAST(SYSUTCDATETIME() AS DATETIME2(6)) AS LoadedAt\nFROM [UGTBI].[dbo].[MG_Product]",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "database": "UGTBI"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "04d3fdb0-b8b1-43cb-9357-f40bdb02cb24"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "writeBehavior": "Insert",
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "Src_Product"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "DWH_Gold_MG",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "9e943b80-8178-8376-4bb3-a70ff481f648",
+                    "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-m3wys2yusgte7maqwtwyt2nzjq.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "ProductID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "ProductID",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "ProductName",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "200"
+                },
+                "sink": {
+                  "name": "ProductName",
+                  "physicalType": "varchar",
+                  "length": "200"
+                }
+              },
+              {
+                "source": {
+                  "name": "Category",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "100"
+                },
+                "sink": {
+                  "name": "Category",
+                  "physicalType": "varchar",
+                  "length": "100"
+                }
+              },
+              {
+                "source": {
+                  "name": "SubCategory",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "100"
+                },
+                "sink": {
+                  "name": "SubCategory",
+                  "physicalType": "varchar",
+                  "length": "100"
+                }
+              },
+              {
+                "source": {
+                  "name": "Brand",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "100"
+                },
+                "sink": {
+                  "name": "Brand",
+                  "physicalType": "varchar",
+                  "length": "100"
+                }
+              },
+              {
+                "source": {
+                  "name": "LastModifiedTime",
+                  "type": "DateTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                },
+                "sink": {
+                  "name": "LastModifiedTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "LoadedAt",
+                  "type": "DateTime",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                },
+                "sink": {
+                  "name": "LoadedAt",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy_Product",
+        "dependsOn": [
+          {
+            "activity": "Log_Start",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "DataWarehouseSource",
+            "sqlReaderQuery": "SELECT TableName,\n   CONVERT(\n   VARCHAR(27), LastChangeLogTime, 126) \nAS WatermarkValue\nFROM dbo.Gold_Watermark\nWHERE TableName = 'Gold_Star';",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "schema": [],
+            "linkedService": {
+              "name": "DWH_Gold_MG",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "9e943b80-8178-8376-4bb3-a70ff481f648",
+                  "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-m3wys2yusgte7maqwtwyt2nzjq.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Lookup_Old_WM",
+        "dependsOn": []
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "DataWarehouseSource",
+            "sqlReaderQuery": "SELECT CONVERT(VARCHAR(27),\n         COALESCE(MAX(LoggedAt), CAST('1900-01-01' AS DATETIME2(6))), 126) AS NewWatermarkValue\nFROM lh_Silver_MG.dbo.silver_change_log;\n",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "schema": [],
+            "linkedService": {
+              "name": "DWH_Control_MG",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "15ce4a1d-d50b-4fc2-982a-c4a61def28a4",
+                  "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "15dede2e-b9d9-4ce7-a199-3337b30e53e2"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Lookup_New_WM",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "Var_RunID",
+          "value": "@guid()"
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Var_RunID",
+        "dependsOn": [
+          {
+            "activity": "Lookup_Old_WM",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Lookup_New_WM",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[usp_Gold_LogStart]",
+          "storedProcedureParameters": {
+            "PipelineName": {
+              "value": "Gold_Refresh",
+              "type": "String"
+            },
+            "RunID": {
+              "value": "@variables('Var_RunID')",
+              "type": "Guid"
+            },
+            "TableName": {
+              "value": "Gold_Star",
+              "type": "String"
+            }
+          }
+        },
+        "linkedService": {
+          "name": "DWH_Gold_MG",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "9e943b80-8178-8376-4bb3-a70ff481f648",
+              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-m3wys2yusgte7maqwtwyt2nzjq.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Log_Start",
+        "dependsOn": [
+          {
+            "activity": "Var_RunID",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "variables": {
+      "Var_RunID": {
+        "type": "String"
+      }
+    }
+  }
+}
