@@ -2,87 +2,77 @@
   "properties": {
     "activities": [
       {
+        "name": "Lookup_Old_WM",
         "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "source": {
             "type": "DataWarehouseSource",
             "sqlReaderQuery": "SELECT TableName,\n       CONVERT(\n             VARCHAR(23), WatermarkValue, 126) AS WatermarkValue\nFROM dbo.Bronze_Watermark\nWHERE TableName = 'Bronze_wm';\n",
-            "partitionOption": "None",
-            "queryTimeout": "02:00:00"
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
           },
           "datasetSettings": {
-            "type": "DataWarehouseTable",
-            "schema": [],
+            "annotations": [],
             "linkedService": {
-              "name": "DWH_Control_MG",
+              "name": "5edaf226_c70e_478e_9683_ee85f7600de9",
               "properties": {
+                "annotations": [],
                 "type": "DataWarehouse",
                 "typeProperties": {
-                  "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-                  "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-                  "workspaceId": "00000000-0000-0000-0000-000000000000"
-                },
-                "annotations": []
+                  "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+                  "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+                  "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+                }
               }
             },
-            "annotations": []
+            "type": "DataWarehouseTable",
+            "schema": [],
+            "typeProperties": {}
           }
-        },
+        }
+      },
+      {
+        "name": "Lookup_New_WM",
+        "type": "Lookup",
+        "dependsOn": [],
         "policy": {
           "timeout": "0.12:00:00",
           "retry": 0,
           "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
+          "secureOutput": false,
+          "secureInput": false
         },
-        "name": "Lookup_Old_WM",
-        "dependsOn": []
-      },
-      {
-        "type": "Lookup",
         "typeProperties": {
           "source": {
             "type": "SqlServerSource",
             "sqlReaderQuery": "SELECT CONVERT(VARCHAR(23),\n         COALESCE(\nMAX([LastModifiedtime]), '1900-01-01'), 126) AS NewWatermarkValue\nFROM [UGTBI].[dbo].[Sales_Raw_MG]\n",
-            "partitionOption": "None",
-            "queryTimeout": "02:00:00"
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
           },
           "datasetSettings": {
+            "annotations": [],
             "type": "SqlServerTable",
+            "schema": [],
             "typeProperties": {
               "database": "UGTBI"
             },
-            "schema": [],
             "externalReferences": {
               "connection": "04d3fdb0-b8b1-43cb-9357-f40bdb02cb24"
-            },
-            "annotations": []
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Lookup_New_WM",
-        "dependsOn": []
+        }
       },
       {
-        "type": "SetVariable",
-        "typeProperties": {
-          "variableName": "Var_RunID",
-          "value": {
-            "value": "@guid()",
-            "type": "Expression"
-          }
-        },
-        "policy": {
-          "secureInput": false,
-          "secureOutput": false
-        },
         "name": "Set_RunID",
+        "type": "SetVariable",
         "dependsOn": [
           {
             "activity": "Lookup_Old_WM",
@@ -96,10 +86,37 @@
               "Succeeded"
             ]
           }
-        ]
+        ],
+        "policy": {
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "variableName": "Var_RunID",
+          "value": {
+            "value": "@guid()",
+            "type": "Expression"
+          }
+        }
       },
       {
+        "name": "Log_Start",
         "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Set_RunID",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[dbo].[usp_Bronze_LogStart]",
           "storedProcedureParameters": {
@@ -121,102 +138,21 @@
           }
         },
         "linkedService": {
-          "name": "DWH_Control_MG",
+          "name": "5e543ce1_e108_46e9_b6c9_c6429b7772fb",
           "properties": {
+            "annotations": [],
             "type": "DataWarehouse",
             "typeProperties": {
-              "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-              "workspaceId": "00000000-0000-0000-0000-000000000000"
-            },
-            "annotations": []
+              "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+              "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+              "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Log_Start",
-        "dependsOn": [
-          {
-            "activity": "Set_RunID",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
+        }
       },
       {
-        "type": "Copy",
-        "typeProperties": {
-          "source": {
-            "type": "SqlServerSource",
-            "sqlReaderQuery": {
-              "value": "SELECT \n RowID, \n TransactionID, \n LineNumber, \n TransactionDateTime, \n StoreID, \n CustomerID,\n ProductID, \n Quantity, \n UnitPrice, \n Discount, \n TotalAmount, \n PaymentMethod,\n CashierID, \n [LastModifiedtime]\nFROM UGTBI.dbo.Sales_Raw_MG\nWHERE [LastModifiedtime]>'@{activity('Lookup_Old_WM').output.firstRow.WatermarkValue}'\n AND [LastModifiedtime]<='@{activity('Lookup_New_WM').output.firstRow.NewWatermarkValue}'\n",
-              "type": "Expression"
-            },
-            "partitionOption": "None",
-            "queryTimeout": "02:00:00",
-            "datasetSettings": {
-              "type": "SqlServerTable",
-              "typeProperties": {
-                "database": "UGTBI"
-              },
-              "schema": [],
-              "externalReferences": {
-                "connection": "04d3fdb0-b8b1-43cb-9357-f40bdb02cb24"
-              },
-              "annotations": []
-            }
-          },
-          "sink": {
-            "type": "LakehouseTableSink",
-            "tableActionOption": "Append",
-            "applyVOrder": false,
-            "enableTimestampNtz": false,
-            "datasetSettings": {
-              "type": "LakehouseTable",
-              "typeProperties": {
-                "schema": "dbo",
-                "table": "raw_bronze_data"
-              },
-              "schema": [],
-              "linkedService": {
-                "name": "lh_Bronze_MG",
-                "properties": {
-                  "type": "Lakehouse",
-                  "typeProperties": {
-                    "artifactId": "1756842b-81d6-adf7-4c78-325c54f8cae4",
-                    "workspaceId": "00000000-0000-0000-0000-000000000000",
-                    "rootFolder": "Tables"
-                  },
-                  "annotations": []
-                }
-              },
-              "annotations": []
-            }
-          },
-          "translator": {
-            "type": "TabularTranslator",
-            "typeConversion": true,
-            "typeConversionSettings": {
-              "allowDataTruncation": true,
-              "treatBooleanAsNumber": false
-            }
-          },
-          "enableStaging": false
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
         "name": "Raw_Import",
+        "type": "Copy",
         "dependsOn": [
           {
             "activity": "Log_Start",
@@ -224,10 +160,92 @@
               "Succeeded"
             ]
           }
-        ]
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "sqlReaderQuery": {
+              "value": "SELECT \n RowID, \n TransactionID, \n LineNumber, \n TransactionDateTime, \n StoreID, \n CustomerID,\n ProductID, \n Quantity, \n UnitPrice, \n Discount, \n TotalAmount, \n PaymentMethod,\n CashierID, \n [LastModifiedtime]\nFROM UGTBI.dbo.Sales_Raw_MG\nWHERE [LastModifiedtime]>'@{activity('Lookup_Old_WM').output.firstRow.WatermarkValue}'\n AND [LastModifiedtime]<='@{activity('Lookup_New_WM').output.firstRow.NewWatermarkValue}'\n",
+              "type": "Expression"
+            },
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "SqlServerTable",
+              "schema": [],
+              "typeProperties": {
+                "database": "UGTBI"
+              },
+              "externalReferences": {
+                "connection": "04d3fdb0-b8b1-43cb-9357-f40bdb02cb24"
+              }
+            }
+          },
+          "sink": {
+            "type": "LakehouseTableSink",
+            "tableActionOption": "Append",
+            "partitionOption": "None",
+            "applyVOrder": false,
+            "enableTimestampNtz": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "21cbb780_24b3_464d_9fd7_826aa4dbc0d2",
+                "properties": {
+                  "annotations": [],
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id",
+                    "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_LH_Bronze_Id",
+                    "rootFolder": "Tables"
+                  }
+                }
+              },
+              "type": "LakehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "raw_bronze_data"
+              }
+            }
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
       },
       {
+        "name": "Log_Error",
         "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Raw_Import",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[dbo].[usp_Bronze_LogError]",
           "storedProcedureParameters": {
@@ -248,36 +266,36 @@
           }
         },
         "linkedService": {
-          "name": "DWH_Control_MG",
+          "name": "60f6f109_2e5d_40ad_ae1e_d3ae1a101baf",
           "properties": {
+            "annotations": [],
             "type": "DataWarehouse",
             "typeProperties": {
-              "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-              "workspaceId": "00000000-0000-0000-0000-000000000000"
-            },
-            "annotations": []
+              "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+              "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+              "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Log_Error",
+        }
+      },
+      {
+        "name": "Log_Success",
+        "type": "SqlServerStoredProcedure",
         "dependsOn": [
           {
             "activity": "Raw_Import",
             "dependencyConditions": [
-              "Failed"
+              "Succeeded"
             ]
           }
-        ]
-      },
-      {
-        "type": "SqlServerStoredProcedure",
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[dbo].[usp_Bronze_LogSuccess]",
           "storedProcedureParameters": {
@@ -305,36 +323,36 @@
           }
         },
         "linkedService": {
-          "name": "DWH_Control_MG",
+          "name": "781a194c_a023_42b7_830a_190913f3c68d",
           "properties": {
+            "annotations": [],
             "type": "DataWarehouse",
             "typeProperties": {
-              "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-              "workspaceId": "00000000-0000-0000-0000-000000000000"
-            },
-            "annotations": []
+              "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+              "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+              "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Log_Success",
+        }
+      },
+      {
+        "name": "Update_Bronze_WM",
+        "type": "SqlServerStoredProcedure",
         "dependsOn": [
           {
-            "activity": "Raw_Import",
+            "activity": "Log_Success",
             "dependencyConditions": [
               "Succeeded"
             ]
           }
-        ]
-      },
-      {
-        "type": "SqlServerStoredProcedure",
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[dbo].[usp_write_watermark]",
           "storedProcedureParameters": {
@@ -355,36 +373,36 @@
           }
         },
         "linkedService": {
-          "name": "DWH_Control_MG",
+          "name": "883b7af5_ffe9_416d_855f_88c9867e19e2",
           "properties": {
+            "annotations": [],
             "type": "DataWarehouse",
             "typeProperties": {
-              "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-              "workspaceId": "00000000-0000-0000-0000-000000000000"
-            },
-            "annotations": []
+              "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+              "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+              "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Update_Bronze_WM",
+        }
+      },
+      {
+        "name": "Log_Success_Error",
+        "type": "SqlServerStoredProcedure",
         "dependsOn": [
           {
             "activity": "Log_Success",
             "dependencyConditions": [
-              "Succeeded"
+              "Failed"
             ]
           }
-        ]
-      },
-      {
-        "type": "SqlServerStoredProcedure",
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
         "typeProperties": {
           "storedProcedureName": "[dbo].[usp_Bronze_LogError]",
           "storedProcedureParameters": {
@@ -405,36 +423,29 @@
           }
         },
         "linkedService": {
-          "name": "DWH_Control_MG",
+          "name": "bde0c9f5_29fb_4d11_a27a_32dfcf1cee14",
           "properties": {
+            "annotations": [],
             "type": "DataWarehouse",
             "typeProperties": {
-              "artifactId": "1def28a4-c4a6-982a-4fc2-d50b15ce4a1d",
-              "endpoint": "2k4cbaxoohluvdfwgtsz6g3rqu-f3pn4fozxhtuzimzgm33gdst4i.datawarehouse.fabric.microsoft.com",
-              "workspaceId": "00000000-0000-0000-0000-000000000000"
-            },
-            "annotations": []
+              "endpoint": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Endpoint",
+              "artifactId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Control_Id",
+              "workspaceId": "@pipeline().libraryVariables.VL_Bronze_Silver_DWH_Workspace_Id"
+            }
           }
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Log_Success_Error",
-        "dependsOn": [
-          {
-            "activity": "Log_Success",
-            "dependencyConditions": [
-              "Failed"
-            ]
-          }
-        ]
+        }
       },
       {
+        "name": "Fail1",
         "type": "Fail",
+        "dependsOn": [
+          {
+            "activity": "Log_Error",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
         "typeProperties": {
           "message": {
             "value": "@{activity('Raw_Import').error.message}",
@@ -444,21 +455,34 @@
             "value": "@{activity('Raw_Import').error.errorCode}",
             "type": "Expression"
           }
-        },
-        "name": "Fail1",
-        "dependsOn": [
-          {
-            "activity": "Log_Error",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
+        }
       }
     ],
     "variables": {
       "Var_RunID": {
         "type": "String"
+      }
+    },
+    "libraryVariables": {
+      "VL_Bronze_Silver_DWH_Workspace_Id": {
+        "type": "String",
+        "variableName": "DWH_Workspace_Id",
+        "libraryName": "VL_Bronze_Silver"
+      },
+      "VL_Bronze_Silver_DWH_Control_Id": {
+        "type": "String",
+        "variableName": "DWH_Control_Id",
+        "libraryName": "VL_Bronze_Silver"
+      },
+      "VL_Bronze_Silver_DWH_Endpoint": {
+        "type": "String",
+        "variableName": "DWH_Endpoint",
+        "libraryName": "VL_Bronze_Silver"
+      },
+      "VL_Bronze_Silver_LH_Bronze_Id": {
+        "type": "String",
+        "variableName": "LH_Bronze_Id",
+        "libraryName": "VL_Bronze_Silver"
       }
     }
   }

@@ -50,7 +50,7 @@ spark.conf.set("spark.sql.session.timeZone", "UTC")
 BRONZE_TABLE     = "lh_Bronze_MG.dbo.Raw_Bronze_Data"
 SILVER_TABLE     = "lh_Silver_MG.dbo.Silver_Sales"
 REJECTED_TABLE   = "lh_Silver_MG.dbo.Silver_Rejected"
-CHANGE_LOG_TABLE = "lh_Silver_MG.dbo.Silver_Change_Log"
+CHANGE_LOG_TABLE = "lh_Silver_MG.dbo.silver_change_log"
 
 
 # METADATA ********************

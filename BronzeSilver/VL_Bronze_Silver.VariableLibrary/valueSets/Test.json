@@ -1,0 +1,26 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/valueSet/1.0.0/schema.json",
+  "name": "Test",
+  "variableOverrides": [
+    {
+      "name": "DWH_Workspace_Id",
+      "value": "4d5e1ce8-b32a-45c0-9750-9d99eaa7e7fd"
+    },
+    {
+      "name": "DWH_Control_Id",
+      "value": "399144dd-a149-465c-8c24-162257fd5388"
+    },
+    {
+      "name": "DWH_Endpoint",
+      "value": "2k4cbaxoohluvdfwgtsz6g3rqu-5aof4tjkwpaelf2qtwm6vj7h7u.datawarehouse.fabric.microsoft.com"
+    },
+    {
+      "name": "LH_Bronze_Id",
+      "value": "1599da90-b7b3-4aeb-87dc-f3fc0b69c0ef"
+    },
+    {
+      "name": "NB_Bronze_To_Silver_Id",
+      "value": "bde7ba67-3bff-4b17-8836-936583419e03"
+    }
+  ]
+}
